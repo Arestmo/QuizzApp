@@ -32,11 +32,11 @@ Future<List<CategoryModel>> getAllCategories() async {
   });
 }
 
-Future<List<QuestionModel>> getQuestionByCategoryId(int categoryId) async {
+Future<List<QuestionModel>> getQuestionByCategoryId(int categoryId,int numberOfQuestion) async {
   String token;
   return HelperFunctions.getUserToken().then((value) async {
     token = value;
-    final response = await http.get('$_serverPath/question/random/$categoryId/4', headers: {
+    final response = await http.get('$_serverPath/question/random/$categoryId/$numberOfQuestion', headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Authorization': 'Bearer $token'

@@ -18,7 +18,7 @@ class PlayQuiz extends StatefulWidget {
 class _PlayQuizState extends State<PlayQuiz> {
   List<QuestionModel> questions;
   String email;
-
+  int _numberOfQuestionPerGame;
 
   @override
   void initState() {
@@ -27,10 +27,16 @@ class _PlayQuizState extends State<PlayQuiz> {
         email = value;
       });
     });
+
     super.initState();
-    getQuestionByCategoryId(widget.categoryId).then((value) {
+    HelperFunctions.getQuestionPerGame().then((value) {
       setState(() {
-        questions = value;
+        _numberOfQuestionPerGame = value;
+      });
+      getQuestionByCategoryId(widget.categoryId, _numberOfQuestionPerGame).then((value){
+        setState(() {
+          questions = value;
+        });
       });
     });
   }

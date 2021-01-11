@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_app/helpers/functions.dart';
 import 'package:quiz_app/models/categoryModel.dart';
 import 'package:quiz_app/server/requests.dart';
 import 'package:quiz_app/services/auth.dart';
@@ -18,6 +19,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+
     super.initState();
     getAllCategories().then((value) {
       setState(() {
@@ -54,20 +56,30 @@ class _HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CreateQuestion(allCategories)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CreateQuestion(allCategories)));
         },
       ),
     );
   }
 }
 
-class QuizTitle extends StatelessWidget {
+class QuizTitle extends StatefulWidget {
   final String imgUrl;
   final String title;
   final int id;
 
-  QuizTitle({@required this.imgUrl, @required this.title,@required this.id});
+
+  QuizTitle({@required this.imgUrl, @required this.title, @required this.id});
+
+
+  @override
+  _QuizTitleState createState() => _QuizTitleState();
+}
+
+class _QuizTitleState extends State<QuizTitle> {
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +89,7 @@ class QuizTitle extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => PlayQuiz(
-                      categoryId: id,
+                      categoryId: widget.id,
                     )));
       },
       child: Container(
@@ -89,7 +101,7 @@ class QuizTitle extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Image.network(
-                imgUrl,
+                widget.imgUrl,
                 width: MediaQuery.of(context).size.width,
                 fit: BoxFit.cover,
               ),
@@ -101,7 +113,7 @@ class QuizTitle extends StatelessWidget {
                 color: Colors.black26,
               ),
               child: Text(
-                title,
+                widget.title,
                 style: TextStyle(
                     fontSize: 30,
                     color: Colors.white,

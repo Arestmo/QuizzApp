@@ -5,6 +5,7 @@ class HelperFunctions {
   static String isUserAdmin = 'ISUSERADMIN';
   static String userToken = 'USERTOKEN';
   static String userEmail = 'USEREMAIL';
+  static String numberOfQuestionPerGame = 'NUMBEROFQUESTIONPERGAME';
 
 
   static saveUserLoggedDetails({bool isLoggedin}) async {
@@ -45,6 +46,16 @@ class HelperFunctions {
   static Future<String> getUserEmail () async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(userEmail);
+  }
+
+  static setQuestionPerGame({int quesionsPerGame}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(numberOfQuestionPerGame, quesionsPerGame);
+  }
+
+  static Future<int> getQuestionPerGame () async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(numberOfQuestionPerGame);
   }
 
 

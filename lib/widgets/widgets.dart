@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:quiz_app/helpers/functions.dart';
 import 'package:quiz_app/models/questionModel.dart';
 import 'package:quiz_app/services/auth.dart';
+import 'package:quiz_app/views/settings.dart';
 import 'package:quiz_app/views/signin.dart';
 import 'package:recase/recase.dart';
 
@@ -239,8 +240,6 @@ class _NavDrawerState extends State<NavDrawer> {
     });
   }
 
-  //eyJhbGciOiJSUzI1NiIsImtpZCI6ImUwOGI0NzM0YjYxNmE0MWFhZmE5MmNlZTVjYzg3Yjc2MmRmNjRmYTIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vcXVpenphcHAtOWExNDUiLCJhdWQiOiJxdWl6emFwcC05YTE0NSIsImF1dGhfdGltZSI6MTYxMDMwMTI4MSwidXNlcl9pZCI6IlRkZzVHTlp1eUFiS1lySGk1MVJaMXAxcm9DSTMiLCJzdWIiOiJUZGc1R05adXlBYktZckhpNTFSWjFwMXJvQ0kzIiwiaWF0IjoxNjEwMzAxMjgxLCJleHAiOjE2MTAzMDQ4ODEsImVtYWlsIjoiYWRtaW5AZW1haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbImFkbWluQGVtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.MACXFASCJXCQfucoh-Hik38-nCZ94ik8ssjONTTZ87LTna6g4cMc25MYdi_9Pq-MuvOvepDNcyg2o00u05_eGb8fJM6vf7nZNYJegv5jzi61G2RsHHceauTREQDRRdkeCniQSvDnEWdDXBuC_mxQb8vX-OB0BXqSCWss5ocONod72RLxHIkYP1kn5W2Mt-2gfHuXDkJZyrgqrsB4kuY5ERuPAYh8MFwT1ov8MMvsmClZQeVXXfFpc_DvHMEbLrazSrdljssBoTY7qhSI6Ah--NFbtEltsMHNnUCWiUVxRWwfDN2rOYrk5w3mYMz9Wr2gihUScvAdlGFqSYB2bvwtPQ
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -276,7 +275,7 @@ class _NavDrawerState extends State<NavDrawer> {
             ),
             title: Text('Settings'),
             onTap: () {
-              Navigator.of(context).pop();
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
             },
           ),
           ListTile(
