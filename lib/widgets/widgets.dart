@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:quiz_app/helpers/functions.dart';
 import 'package:quiz_app/models/questionModel.dart';
 import 'package:quiz_app/services/auth.dart';
+import 'package:quiz_app/views/addedquestions.dart';
 import 'package:quiz_app/views/settings.dart';
 import 'package:quiz_app/views/signin.dart';
 import 'package:recase/recase.dart';
@@ -225,11 +226,20 @@ class NavDrawer extends StatefulWidget {
 
 class _NavDrawerState extends State<NavDrawer> {
   bool _isAdmin = false;
-
+  String userEmail;
   @override
   void initState() {
     checkIsAdmin();
+    getUserEmail();
     super.initState();
+  }
+
+  getUserEmail() async {
+    HelperFunctions.getUserEmail().then((value) {
+      setState(() {
+        userEmail = value;
+      });
+    });
   }
 
   checkIsAdmin() async {
@@ -280,6 +290,16 @@ class _NavDrawerState extends State<NavDrawer> {
           ),
           ListTile(
             leading: Icon(
+              Icons.question_answer_outlined,
+              color: Colors.green,
+            ),
+            title: Text('Added Questions'),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddedQuestions(userEmail: userEmail)));
+            },
+          ),
+          ListTile(
+            leading: Icon(
               Icons.logout,
               color: Colors.green,
             ),
@@ -307,3 +327,32 @@ class _NavDrawerState extends State<NavDrawer> {
     );
   }
 }
+
+class PendingQuestionTile extends StatefulWidget {
+  final QuestionModel question;
+
+  PendingQuestionTile({this.question});
+  @override
+  _PendingQuestionTileState createState() => _PendingQuestionTileState();
+}
+
+class _PendingQuestionTileState extends State<PendingQuestionTile> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(vertical: 20),
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      decoration: BoxDecoration(
+        color: widget.question.approved == true ? Colors.green : Colors.red,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Column(
+        children: [
+          Text(widget.question.questionTitle, style: TextStyle(fontSize: 24)),
+        ],
+      ),
+    );
+  }
+}
+

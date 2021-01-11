@@ -22,7 +22,6 @@ Future<List<CategoryModel>> getAllCategories() async {
       List<CategoryModel> categoryJsons = categoryObjects
           .map((categoryJson) => CategoryModel.fromJson(categoryJson))
           .toList();
-      print(categoryJsons);
       return categoryJsons;
     } else {
       // If the server did not return a 200 OK response,
@@ -48,7 +47,6 @@ Future<List<QuestionModel>> getQuestionByCategoryId(int categoryId,int numberOfQ
       List<QuestionModel> questionJsons = questionsObjects
           .map((questionJson) => QuestionModel.fromJson(questionJson))
           .toList();
-      print(questionJsons);
       return questionJsons;
     } else {
       // If the server did not return a 200 OK response,
@@ -88,6 +86,32 @@ Future<http.Response> createPendingQuestion(QuestionModel question) async {
     }
   });
 }
+
+Future<List<QuestionModel>> getPendingQuestions(String userEmail) async {
+  String token;
+  return HelperFunctions.getUserToken().then((value) async {
+    token = value;
+    final response = await http.get('$_serverPath/question/getUserList/$userEmail', headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      var questionsObjects = jsonDecode(utf8.decode(response.bodyBytes)) as List;
+      List<QuestionModel> questionJsons = questionsObjects
+          .map((questionJson) => QuestionModel.fromJson(questionJson))
+          .toList();
+      return questionJsons;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load questions');
+    }
+  });
+}
+
 
 Future<http.Response> pushCompletedQuiz({int correctAnswers, int nofQuestions,String userEmail}) async {
   String token;

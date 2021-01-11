@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:quiz_app/helpers/functions.dart';
 import 'package:quiz_app/models/categoryModel.dart';
 import 'package:quiz_app/server/requests.dart';
 import 'package:quiz_app/services/auth.dart';
