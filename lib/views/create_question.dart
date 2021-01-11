@@ -161,14 +161,7 @@ class _CreateQuestionState extends State<CreateQuestion> {
                       },
                       child: buttonGreen(context, 'Add Question'),
                     ),
-                    /*SizedBox(height: 6),
-                    GestureDetector(
-                      onTap: () {
-                        databaseService.getCategories();
-                      },
-                      child: buttonGreen(context, 'Get Categories'),
-                    ),*/
-                    SizedBox(height: 60)
+                    SizedBox(height: 20)
                   ],
                 ),
               ),

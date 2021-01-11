@@ -11,7 +11,7 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   final _formKey = GlobalKey<FormState>();
-  String email = 'arestmo@email.com', password = 'password';
+  String email, password;
   AuthService authService = new AuthService();
   bool _isLoading = false;
 
@@ -61,7 +61,6 @@ class _SignInState extends State<SignIn> {
                       },
                       decoration:
                           InputDecoration(hintText: "Nickname or Email"),
-                      initialValue: 'arestmo@email.com',
                       onChanged: (val) {
                         email = val;
                       },
@@ -73,7 +72,6 @@ class _SignInState extends State<SignIn> {
                         return val.isEmpty ? "Enter password" : null;
                       },
                       decoration: InputDecoration(hintText: "Password"),
-                      initialValue: 'password',
                       onChanged: (val) {
                         password = val;
                       },

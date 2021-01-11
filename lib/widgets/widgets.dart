@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:quiz_app/helpers/functions.dart';
@@ -44,6 +45,18 @@ Widget buttonGreen(BuildContext context, String buttonLabel) {
     width: MediaQuery.of(context).size.width,
     child:
         Text(buttonLabel, style: TextStyle(color: Colors.white, fontSize: 20)),
+  );
+}
+
+Widget buttonGreenHalf(BuildContext context, String buttonLabel) {
+  return Container(
+    padding: EdgeInsets.symmetric(vertical: 16),
+    decoration: BoxDecoration(
+        color: Colors.green, borderRadius: BorderRadius.circular(50)),
+    alignment: Alignment.center,
+    width: MediaQuery.of(context).size.width/ 2 -24,
+    child:
+    Text(buttonLabel, style: TextStyle(color: Colors.white, fontSize: 20)),
   );
 }
 
@@ -512,14 +525,136 @@ class _SingleUserTileState extends State<SingleUserTile> {
               color: Colors.black26,
             ),
             child: Text(
-              "${widget.index+1}:${widget.topUser.userEmail} - ${widget.topUser.userPercents}%",
+              "${widget.index + 1}:${widget.topUser.userEmail} - ${widget.topUser.userPercents}%",
               style: TextStyle(
-                  fontSize: 24,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,),
+                fontSize: 24,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class QuestionApproveTile extends StatefulWidget {
+  final QuestionModel pendingQuestion;
+
+  QuestionApproveTile({this.pendingQuestion});
+
+  @override
+  _QuestionApproveTileState createState() => _QuestionApproveTileState();
+}
+
+class _QuestionApproveTileState extends State<QuestionApproveTile> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(horizontal: 2),
+      margin: EdgeInsets.symmetric(horizontal: 4,vertical: 5),
+      decoration: BoxDecoration(
+          border: Border.all(width: 1, color: Colors.black),
+          borderRadius: BorderRadius.circular(25)
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width - 24,
+                child: Center(
+                  child: Text(
+                    widget.pendingQuestion.questionTitle,
+                    style: TextStyle(fontSize: 24),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              SinglePendingAnswerTile(
+                answerText: widget.pendingQuestion.answers[0],
+                isCorrect: true,
+              ),
+              SizedBox(width: 5),
+              SinglePendingAnswerTile(
+                answerText: widget.pendingQuestion.answers[1],
+                isCorrect: false,
+              ),
+              SizedBox(width: 5),
+              SinglePendingAnswerTile(
+                answerText: widget.pendingQuestion.answers[2],
+                isCorrect: false,
+              ),
+              SizedBox(width: 5),
+              SinglePendingAnswerTile(
+                answerText: widget.pendingQuestion.answers[3],
+                isCorrect: false,
+              ),
+
+            ],
+          ),
+          SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  approvePendingQuestion(widget.pendingQuestion).then((value) {
+                    setState(() {
+                    });
+                  });
+                },
+                child: buttonGreenHalf(context, "Approve"),
+              ),
+              GestureDetector(
+                onTap: () {
+                  deleteQuestion(questionId: widget.pendingQuestion.questionId).then((value) {
+                    setState(() {
+
+                    });
+                  });
+                },
+                child: buttonGreenHalf(context, "Delete"),
+              )
+            ],
+          ),
+          SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+}
+
+class SinglePendingAnswerTile extends StatefulWidget {
+  final String answerText;
+  final bool isCorrect;
+
+  SinglePendingAnswerTile({this.answerText, this.isCorrect});
+
+  @override
+  _SinglePendingAnswerTileState createState() =>
+      _SinglePendingAnswerTileState();
+}
+
+class _SinglePendingAnswerTileState extends State<SinglePendingAnswerTile> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width / 4 -10,
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: widget.isCorrect == true ? Colors.green : Colors.grey),
+      alignment: Alignment.center,
+      child: Text(
+        widget.answerText,
+        style: TextStyle(color: widget.isCorrect ? Colors.white : Colors.black),
       ),
     );
   }
