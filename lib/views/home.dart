@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_app/helpers/functions.dart';
 import 'package:quiz_app/models/categoryModel.dart';
 import 'package:quiz_app/server/requests.dart';
 import 'package:quiz_app/services/auth.dart';
@@ -18,6 +19,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    HelperFunctions.setQuestionPerGame(quesionsPerGame: 10);
 
     super.initState();
     getAllCategories().then((value) {
@@ -70,16 +72,13 @@ class QuizTitle extends StatefulWidget {
   final String title;
   final int id;
 
-
   QuizTitle({@required this.imgUrl, @required this.title, @required this.id});
-
 
   @override
   _QuizTitleState createState() => _QuizTitleState();
 }
 
 class _QuizTitleState extends State<QuizTitle> {
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -135,15 +134,19 @@ class CategoriesTiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return categories != null
-        ? ListView.builder(
-            itemCount: categories.length,
-            itemBuilder: (BuildContext context, int index) {
-              return new QuizTitle(
-                title: categories[index].categoryName,
-                imgUrl: categories[index].categoryUrl,
-                id: categories[index].categoryId,
-              );
-            })
+        ? CustomScrollView(
+            slivers: [
+              SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                return QuizTitle(
+                  title: categories[index].categoryName,
+                  imgUrl: categories[index].categoryUrl,
+                  id: categories[index].categoryId,
+                );
+              }, childCount: categories.length))
+            ],
+          )
         : Container(
             child: Center(
               child: CircularProgressIndicator(),
@@ -151,3 +154,13 @@ class CategoriesTiles extends StatelessWidget {
           );
   }
 }
+
+/*ListView.builder(
+itemCount: categories.length,
+itemBuilder: (BuildContext context, int index) {
+return QuizTitle(
+title: categories[index].categoryName,
+imgUrl: categories[index].categoryUrl,
+id: categories[index].categoryId,
+);
+})*/

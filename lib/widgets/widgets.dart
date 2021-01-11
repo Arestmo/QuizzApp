@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:quiz_app/helpers/functions.dart';
+import 'package:quiz_app/models/categoryModel.dart';
 import 'package:quiz_app/models/questionModel.dart';
+import 'package:quiz_app/server/requests.dart';
 import 'package:quiz_app/services/auth.dart';
 import 'package:quiz_app/views/addedquestions.dart';
+import 'package:quiz_app/views/adminpanel.dart';
+import 'package:quiz_app/views/ranktop.dart';
 import 'package:quiz_app/views/settings.dart';
 import 'package:quiz_app/views/signin.dart';
+import 'package:quiz_app/views/userstats.dart';
 import 'package:recase/recase.dart';
 
 AuthService authService = new AuthService();
@@ -94,9 +99,7 @@ class _SingleQuestionTileState extends State<SingleQuestionTile> {
   @override
   void initState() {
     widget.questionModel.answers.shuffle();
-    setState(() {
-
-    });
+    setState(() {});
     super.initState();
   }
 
@@ -227,6 +230,7 @@ class NavDrawer extends StatefulWidget {
 class _NavDrawerState extends State<NavDrawer> {
   bool _isAdmin = false;
   String userEmail;
+
   @override
   void initState() {
     checkIsAdmin();
@@ -273,9 +277,25 @@ class _NavDrawerState extends State<NavDrawer> {
               Icons.star,
               color: Colors.green,
             ),
-            title: Text('Rankings'),
+            title: Text('Top 10'),
             onTap: () {
-              Navigator.of(context).pop();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RankTop(topItems: 10)));
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.stacked_bar_chart,
+              color: Colors.green,
+            ),
+            title: Text('My Stats'),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => UserStats(userEmail: userEmail)));
             },
           ),
           ListTile(
@@ -285,7 +305,8 @@ class _NavDrawerState extends State<NavDrawer> {
             ),
             title: Text('Settings'),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Settings()));
             },
           ),
           ListTile(
@@ -295,7 +316,11 @@ class _NavDrawerState extends State<NavDrawer> {
             ),
             title: Text('Added Questions'),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddedQuestions(userEmail: userEmail)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          AddedQuestions(userEmail: userEmail)));
             },
           ),
           ListTile(
@@ -318,7 +343,8 @@ class _NavDrawerState extends State<NavDrawer> {
                   ),
                   title: Text('Admin Panel'),
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => AdminPanel()));
                   },
                 )
               : Text("")),
@@ -332,6 +358,7 @@ class PendingQuestionTile extends StatefulWidget {
   final QuestionModel question;
 
   PendingQuestionTile({this.question});
+
   @override
   _PendingQuestionTileState createState() => _PendingQuestionTileState();
 }
@@ -356,3 +383,104 @@ class _PendingQuestionTileState extends State<PendingQuestionTile> {
   }
 }
 
+class CategoryStatsTiles extends StatelessWidget {
+  final List<CategoryModel> categories;
+  final String userEmail;
+  final int days;
+
+  CategoryStatsTiles({this.categories, this.userEmail, this.days});
+
+  @override
+  Widget build(BuildContext context) {
+    return categories != null
+        ? CustomScrollView(
+            slivers: [
+              SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                return QuizStatsTitle(
+                  title: categories[index].categoryName,
+                  imgUrl: categories[index].categoryUrl,
+                  id: categories[index].categoryId,
+                  userEmail: userEmail,
+                  days: days,
+                );
+              }, childCount: categories.length))
+            ],
+          )
+        : Container(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+  }
+}
+
+class QuizStatsTitle extends StatefulWidget {
+  final String imgUrl;
+  final String title;
+  final int id;
+  final String userEmail;
+  final int days;
+
+  QuizStatsTitle(
+      {@required this.imgUrl,
+      @required this.title,
+      @required this.id,
+      @required this.userEmail,
+      @required this.days});
+
+  @override
+  _QuizStatsTitleState createState() => _QuizStatsTitleState();
+}
+
+class _QuizStatsTitleState extends State<QuizStatsTitle> {
+  double _percent;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserStats(widget.userEmail, widget.id.toString(), widget.days)
+        .then((value) {
+      setState(() {
+        _percent = value;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 20),
+      height: 130,
+      alignment: Alignment.center,
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.network(
+              widget.imgUrl,
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Container(
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.black26,
+            ),
+            child: Text(
+              "${widget.title} : ${_percent.toString()}%",
+              style: TextStyle(
+                  fontSize: 30,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 5),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

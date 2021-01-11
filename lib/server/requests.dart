@@ -112,8 +112,30 @@ Future<List<QuestionModel>> getPendingQuestions(String userEmail) async {
   });
 }
 
+Future<double> getUserStats(String userEmail,String categoryId, int days) async {
+  String token;
+  return HelperFunctions.getUserToken().then((value) async {
+    token = value;
+    final response = await http.get('$_serverPath/game/userstats/$userEmail/$categoryId/$days', headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      var responseData = jsonDecode(response.body) as double;
+      return responseData;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load questions');
+    }
+  });
+}
 
-Future<http.Response> pushCompletedQuiz({int correctAnswers, int nofQuestions,String userEmail}) async {
+
+Future<http.Response> pushCompletedQuiz({int correctAnswers, int nofQuestions,String userEmail, String categoryId}) async {
   String token;
   return HelperFunctions.getUserToken().then((value) async {
     token = value;
@@ -127,7 +149,8 @@ Future<http.Response> pushCompletedQuiz({int correctAnswers, int nofQuestions,St
       body: jsonEncode(<String, dynamic>{
         "correctAnswers": correctAnswers,
         "numberOfQuestions":nofQuestions,
-        "userEmail": userEmail
+        "userEmail": userEmail,
+        "categoryId": categoryId,
       }),
     );
     if (response.statusCode == 200) {

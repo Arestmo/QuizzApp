@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:quiz_app/helpers/functions.dart';
 import 'package:quiz_app/models/questionModel.dart';
 import 'package:quiz_app/server/requests.dart';
@@ -33,7 +34,8 @@ class _PlayQuizState extends State<PlayQuiz> {
       setState(() {
         _numberOfQuestionPerGame = value;
       });
-      getQuestionByCategoryId(widget.categoryId, _numberOfQuestionPerGame).then((value){
+      getQuestionByCategoryId(widget.categoryId, _numberOfQuestionPerGame)
+          .then((value) {
         setState(() {
           questions = value;
         });
@@ -52,26 +54,23 @@ class _PlayQuizState extends State<PlayQuiz> {
         brightness: Brightness.light,
         iconTheme: IconThemeData(color: Colors.black87),
       ),
-      body: Column(
-        children: [
-          questions == null
-              ? Container(
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                )
-              : ListView.builder(
-                  shrinkWrap: true,
-                  physics: ClampingScrollPhysics(),
-                  itemCount: questions.length,
-                  itemBuilder: (context, index) {
-                    return SingleQuestionTile(
-                      questionModel: questions[index],
-                    );
-                  },
-                ),
-        ],
-      ),
+      body: questions == null
+          ? Container(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+          : CustomScrollView(
+              slivers: [
+                SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                  return SingleQuestionTile(
+                    questionModel: questions[index],
+                  );
+                }, childCount: questions.length))
+              ],
+            ),
       floatingActionButton: FloatingActionButton(
         child: Icon(
           Icons.check,
@@ -80,14 +79,14 @@ class _PlayQuizState extends State<PlayQuiz> {
         onPressed: () {
           bool _isAllAnswered = true;
           int _total = questions.length;
-          int _correct  = 0;
+          int _correct = 0;
 
           for (var question in questions) {
             if (!question.answered) {
               _isAllAnswered = false;
               break;
             }
-            if(question.answeredCorrect) {
+            if (question.answeredCorrect) {
               _correct++;
             }
           }
@@ -100,7 +99,8 @@ class _PlayQuizState extends State<PlayQuiz> {
                   timeInSecForIosWeb: 1,
                   backgroundColor: Colors.blue[400],
                   textColor: Colors.white,
-                  fontSize: 24,)
+                  fontSize: 24,
+                )
               : showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -152,8 +152,16 @@ class _PlayQuizState extends State<PlayQuiz> {
                                   alignment: Alignment.bottomRight,
                                   child: FlatButton(
                                       onPressed: () {
-                                        pushCompletedQuiz(correctAnswers: _correct, userEmail: email, nofQuestions: _total);
-                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+                                        pushCompletedQuiz(
+                                            correctAnswers: _correct,
+                                            userEmail: email,
+                                            nofQuestions: _total,
+                                            categoryId:
+                                                widget.categoryId.toString());
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Home()));
                                       },
                                       child: Text(
                                         "Close",
