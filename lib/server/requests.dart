@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:quiz_app/helpers/functions.dart';
 import 'package:quiz_app/models/categoryModel.dart';
 import 'package:quiz_app/models/questionModel.dart';
+import 'package:quiz_app/models/topusersModel.dart';
 
 String _serverPath = "http://192.168.0.23:8085/questiongame/api";
 
@@ -126,6 +127,31 @@ Future<double> getUserStats(String userEmail,String categoryId, int days) async 
       // then parse the JSON.
       var responseData = jsonDecode(response.body) as double;
       return responseData;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load questions');
+    }
+  });
+}
+
+Future<List<TopUsersModel>> getTopUsers() async {
+  String token;
+  return HelperFunctions.getUserToken().then((value) async {
+    token = value;
+    final response = await http.get('$_serverPath/game/userrank/10', headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      var topUsersObjects = jsonDecode(utf8.decode(response.bodyBytes)) as List;
+      List<TopUsersModel> topUsersJsons = topUsersObjects
+          .map((questionJson) => TopUsersModel.fromJson(questionJson))
+          .toList();
+      return topUsersJsons;
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.

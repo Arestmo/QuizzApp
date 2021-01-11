@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:quiz_app/helpers/functions.dart';
 import 'package:quiz_app/models/categoryModel.dart';
 import 'package:quiz_app/models/questionModel.dart';
+import 'package:quiz_app/models/topusersModel.dart';
 import 'package:quiz_app/server/requests.dart';
 import 'package:quiz_app/services/auth.dart';
 import 'package:quiz_app/views/addedquestions.dart';
@@ -477,6 +478,45 @@ class _QuizStatsTitleState extends State<QuizStatsTitle> {
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 5),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SingleUserTile extends StatefulWidget {
+  final TopUsersModel topUser;
+  final int index;
+
+  SingleUserTile({this.topUser, this.index});
+
+  @override
+  _SingleUserTileState createState() => _SingleUserTileState();
+}
+
+class _SingleUserTileState extends State<SingleUserTile> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 20),
+      height: 90,
+      alignment: Alignment.center,
+      child: Stack(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.black26,
+            ),
+            child: Text(
+              "${widget.index+1}:${widget.topUser.userEmail} - ${widget.topUser.userPercents}%",
+              style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,),
             ),
           ),
         ],
